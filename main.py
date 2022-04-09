@@ -4,11 +4,12 @@ import pandas as pd
 class CollectChannelData: 
     def __init__(self, channel_url):
         self.hello = "HELLO"
+        self.channel_url = channel_url
 
     def create_empty_csv(self, featrues):
         #TODO: Excetion handeln.... csv File überschreiben.....
  
-        channel = Channel(channel_url)
+        channel = Channel(self.channel_url)
         channel_name = channel.channel_name
         filename= "DATA/"+ channel_name + "_manuel.csv"
         try:
@@ -35,7 +36,7 @@ class CollectChannelData:
         #TODO: Excetion handeln.... csv File überschreiben.....
 
         df = pd.DataFrame()
-        channel = Channel(channel_url)
+        channel = Channel(self.channel_url)
         channel_name = channel.channel_name
         filename= "DATA/"+ channel_name + "_automated.csv"
         features = ["publish_date", "id", "title", "description", "keywords", "length", "views", "age_restricted", "yt_caption_info", "yt_caption_tracks", "vid_info"]
@@ -79,23 +80,36 @@ if __name__ == '__main__':
     features =  ["publish_date","id", "title", "sentiments", "effects", "sound", "behaviour", "tags", "people", "location"]
     #HIER KANAL AUSWÄHLEN
     #Hauptkanal "Schöpferwissen TV": 938 Videos
-    channel_url="https://www.youtube.com/channel/UCGQFj8C3sMhxuFJjkANkyKA/videos"
+    Schoepf_channel_url="https://www.youtube.com/channel/UCGQFj8C3sMhxuFJjkANkyKA/videos"
     #Nebenkanal "Der Wahrheit verpflichtet": 994 Videos
-    channel_url="https://www.youtube.com/c/DerWahrheitverpflichtet"
+    Warheit_channel_url="https://www.youtube.com/c/DerWahrheitverpflichtet"
     #Nebenkanal "Rettung der Menschheit TV": 92 Videos
-    channel_url="https://www.youtube.com/channel/UC5ZGCLwrKIJrdhYwHYcXCvA/videos"
+    Rettung_channel_url="https://www.youtube.com/channel/UC5ZGCLwrKIJrdhYwHYcXCvA/videos"
     #Nebenkanal "Der Weg in deine Freiheit": 32 Videos
-    channel_url= "https://www.youtube.com/channel/UCysE7uKxMA9g7u_6Zzf2iKQ/videos"
+    Freiheit_channel_url= "https://www.youtube.com/channel/UCysE7uKxMA9g7u_6Zzf2iKQ/videos"
     #Nebenkanal "ALLESUNDNICHTS": 48 Videos
-    channel_url="https://www.youtube.com/channel/UCewNpvf2bcJVaXju9r_EOxw/videos"
+    ALLES_channel_url="https://www.youtube.com/channel/UCewNpvf2bcJVaXju9r_EOxw/videos"
     #Nebenkanal "Veit Club": 17 Videos
-    channel_url="https://www.youtube.com/channel/UCzlH19qwncW1Th9z3tWIeKQ/videos"
+    VEITCLUB_channel_url="https://www.youtube.com/channel/UCzlH19qwncW1Th9z3tWIeKQ/videos"
     #Nebenkanal "Drachentöter TV": 287 Videos
-    channel_url="https://www.youtube.com/channel/UC4StsLMnfcOuQ374_oGa5sg/videos"
+    Drachentoeter_channel_url="https://www.youtube.com/channel/UC4StsLMnfcOuQ374_oGa5sg/videos"
     #Nebenkanal "UBC TV": 11 Videos
-    channel_url="https://www.youtube.com/channel/UCWELnCGV_IYWctpTPiB8-Sw"
-    collect_channel_data = CollectChannelData(channel_url)
-    collect_channel_data.process_channel()
+    UBC_channel_url="https://www.youtube.com/channel/UCWELnCGV_IYWctpTPiB8-Sw"
+
+    all_channels= [Schoepf_channel_url, 
+    Warheit_channel_url, 
+    Rettung_channel_url, 
+    Freiheit_channel_url, 
+    ALLES_channel_url,
+    VEITCLUB_channel_url,
+    Drachentoeter_channel_url,
+    UBC_channel_url
+    ] 
+    for item in all_channels:
+        print(item)
+        collect_channel_data = CollectChannelData(item)
+        collect_channel_data.process_channel()
+        collect_channel_data.create_empty_csv(features)
+    print("FERTIG HAT ALLES GEKLAPPT")
+    
     #collect_channel_data.create_empty_csv(features)
-    #print(collect_channel_data.hello)
-    #collect_channel_data.process_channel(channel_url)
