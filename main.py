@@ -6,6 +6,22 @@ class CollectChannelData:
         self.hello = "HELLO"
         self.channel_url = channel_url
 
+    def update(self):
+        channel = Channel(self.channel_url)
+        channel_name = channel.channel_name
+        filename= "../DATA/"+ channel_name + "_manuel.csv"
+        try:
+            print(filename)
+            df = pd.read_csv(filename)
+            print(df)
+
+            print("Update NOW!")
+
+        except:
+            print(filename)
+
+
+
     def create_empty_csv(self, featrues):
         #TODO: Excetion handeln.... csv File überschreiben.....
  
@@ -14,6 +30,7 @@ class CollectChannelData:
         filename= "DATA/"+ channel_name + "_manuel.csv"
         try:
             df = pd.DataFrame(filename)
+            print("File already exists. Use self.update for adding")
         except:
             df = pd.DataFrame(columns=featrues)
             listofzeros = [0] * len(featrues)
@@ -95,8 +112,16 @@ if __name__ == '__main__':
     Drachentoeter_channel_url="https://www.youtube.com/channel/UC4StsLMnfcOuQ374_oGa5sg/videos"
     #Nebenkanal "UBC TV": 11 Videos
     UBC_channel_url="https://www.youtube.com/channel/UCWELnCGV_IYWctpTPiB8-Sw"
+    #EINE CSV ERSTELLEN
+    collect_channel_data = CollectChannelData(VEITCLUB_channel_url)
+    collect_channel_data.update()
 
-    all_channels= [Schoepf_channel_url, 
+
+
+    #Multiple CSVs erstellen
+    """"
+    all_channels= [
+    Schoepf_channel_url, 
     Warheit_channel_url, 
     Rettung_channel_url, 
     Freiheit_channel_url, 
@@ -104,12 +129,24 @@ if __name__ == '__main__':
     VEITCLUB_channel_url,
     Drachentoeter_channel_url,
     UBC_channel_url
-    ] 
+    ]
+    """
+    all_channels= [
+    Rettung_channel_url, 
+    Freiheit_channel_url, 
+    ALLES_channel_url,
+    VEITCLUB_channel_url,
+    Drachentoeter_channel_url,
+    UBC_channel_url
+    ]
+
+
+    """
     for item in all_channels:
-        print(item)
         collect_channel_data = CollectChannelData(item)
         collect_channel_data.process_channel()
         collect_channel_data.create_empty_csv(features)
     print("FERTIG HAT ALLES GEKLAPPT")
     
     #collect_channel_data.create_empty_csv(features)
+    """
