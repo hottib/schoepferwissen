@@ -113,8 +113,9 @@ if __name__ == '__main__':
     #Nebenkanal "UBC TV": 11 Videos
     UBC_channel_url="https://www.youtube.com/channel/UCWELnCGV_IYWctpTPiB8-Sw"
     #EINE CSV ERSTELLEN
+    """ 
     collect_channel_data = CollectChannelData(VEITCLUB_channel_url)
-    collect_channel_data.update()
+    collect_channel_data.update()"""
 
 
 
@@ -132,21 +133,16 @@ if __name__ == '__main__':
     ]
     """
     all_channels= [
-    Rettung_channel_url, 
-    Freiheit_channel_url, 
-    ALLES_channel_url,
-    VEITCLUB_channel_url,
-    Drachentoeter_channel_url,
-    UBC_channel_url
-    ]
+    Schoepf_channel_url, 
+    Warheit_channel_url]
 
-
-    """
     for item in all_channels:
-        collect_channel_data = CollectChannelData(item)
-        collect_channel_data.process_channel()
-        collect_channel_data.create_empty_csv(features)
+        try:
+            collect_channel_data = CollectChannelData(item)
+            collect_channel_data.process_channel()
+        except: 
+            print(item +" hat nicht geklappt")
     print("FERTIG HAT ALLES GEKLAPPT")
     
     #collect_channel_data.create_empty_csv(features)
-    """
+ 
