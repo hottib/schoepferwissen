@@ -38,7 +38,7 @@ grid_options = {
             "children": [
                 {
                     "headerName": "Datum",
-                    "field": "publish_date_x",
+                    "field": "publish_date",
 
                 },
                 {
@@ -47,7 +47,7 @@ grid_options = {
                 },
                 {
                     "headerName": "Titel",
-                    "field": "title_x",
+                    "field": "title",
                     "width": 800,
                 },
                 {
@@ -117,7 +117,7 @@ grid_options = {
                 },
                 {
                     "headerName": "CDS",
-                    "field": "cds",
+                    "field": "CDS",
                     "editable": True,
                 },
             ]
@@ -153,7 +153,7 @@ for i in range(len(loaded_csvs)):
         name = name.replace("_automated", "")
         former_channel_name = name
     if "_man" in name:
-        name = name.replace("_manuel", "")
+        name = name.replace("_manuell", "")
         if former_channel_name == name:
             name = "merge" + name
     all_csvs[name] = loaded_csvs[i]
@@ -197,7 +197,7 @@ imported['keywords'] = imported['keywords'].apply(cleanup_tags)
 
 #apply user filters and render table
 try:
-    filt1 = imported['title_x'].str.contains(titlefilter, na= False)
+    filt1 = imported['title'].str.contains(titlefilter, na= False)
     filt2 = imported['description'].str.contains(descriptionfilter, na= False)
     filt3 = imported['keywords'].str.contains(tagfilter, na= False)
     imported_filt = imported.loc[filt1 & filt2 & filt3]
