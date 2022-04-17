@@ -131,8 +131,7 @@ filefolder = r"\\DATEN\Schöpferwissen\.DATA"
 #if we don't find above path, ask for a new one
 while not Path(filefolder).exists():
     with st.form('csv_form'):
-        st.write('Standard-CSV-Verzeichnis nicht gefunden')
-        newfolder = st.text_input('alternatives CSV-Verzeichnis:', '')
+        newfolder = st.text_input('CSV-Verzeichnis eingeben:', '')
         submitted = st.form_submit_button("OK")
         if not newfolder:
             st.stop()
@@ -161,14 +160,7 @@ for i in range(len(loaded_csvs)):
 lastchosen = 'None'
 chosen_csv = st.radio('', [[*all_csvs][i] for i in range(len(all_csvs)) if not "merge" in [*all_csvs][i]])
 
-col1, col2, col3 = st.columns(3)
-with col1:
-    titlefilter = st.text_input('Titelsuche', '')
-with col2:
-    tagfilter = st.text_input('Tagsuche', '')
-with col3:
-    descriptionfilter = st.text_input('Beschreibungssuche', '')
-
+#open chosen channel data and merge automated and manual csvs
 with open(all_csvs[chosen_csv], 'r', encoding='utf-8') as csv:
     imported = pd.read_csv(csv, encoding='utf-8')
     current_index = [*all_csvs].index(chosen_csv)
@@ -178,7 +170,16 @@ with open(all_csvs[chosen_csv], 'r', encoding='utf-8') as csv:
             imported2 = pd.read_csv(csv2, encoding='utf-8')
             imported = pd.merge(imported, imported2, on='id', sort=False, how="left", validate="one_to_one")
 
-st.write('### ', chosen_csv)
+col1, col2, col3 = st.columns(3)
+with col1:
+    titlefilter = st.text_input('Titelsuche', '')
+    st.write('# ', chosen_csv)
+with col2:
+    tagfilter = st.text_input('Tagsuche', '')
+with col3:
+    descriptionfilter = st.text_input('Beschreibungssuche', '')
+    fulltextfilter = st.text_input('Volltextsuche', '')
+
 
 #filter/drop some stuff before displaying
 caption_codes = {'a.de': 'auto de', 'a.en': 'auto en', 'a.fr': 'auto fr', 'a.it': 'auto it', 'a.vi': 'auto vi', 'a.es': 'auto es', 'a.nl': 'auto nl', 'a.ko': 'auto ko', 'a.ru': 'auto ru', '{}': ''}
