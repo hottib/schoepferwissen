@@ -14,16 +14,11 @@ class Sentiment2CSV:
         self.folder_with_trans = folder_with_transcripts
         self.folder_with_DFs = folder_with_DFs
         self.all_transcript = glob.glob(self.folder_with_trans + "\*.transcript")
-        
         self.list_all_CSVs = []
         self.All_CSVs()
-        
-        
         self.newDF = pd.DataFrame(columns=["id", "polarity", "sensivity"])
         self.get_all_sentiments()
-        self.MergeDfs()
-        #self.get_all_sentiments()
-        
+        self.MergeDfs()        
         
     def getSentiment(self, filename):
         with open(filename, "r") as f:
@@ -59,7 +54,6 @@ class Sentiment2CSV:
                 test = csv.split("\\")[-1]
                 print(test)
                 df_merge.to_csv(test)
-                #df["polarity"]= df.where(df["id"] == self.newDF["id"], True)
             except: 
                 print("*"*50)
                 print("Hello! didnt work with: " + str(csv))
