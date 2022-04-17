@@ -13,7 +13,6 @@ class searchText:
         self.all_text_files()
         self.keyword = keyword
         print(type(self.list_all_texts))
-
         self.numberOfMentions = 0
         self.keywordPositions = 0
         self.list_keywords = []
@@ -22,6 +21,7 @@ class searchText:
 
         #print(self.occurrences)
     #def get_vid_id(self):
+
     def getSentences(self):
         for key in self.list_keywords:
             with open(key[0], "r") as f:
@@ -37,7 +37,6 @@ class searchText:
                     print(sentence)
                     print("_"*80)
                     print("<3"*40)
-
 
     def all_text_files(self):
         all_text_files = []
@@ -62,9 +61,6 @@ class searchText:
                 list_keywords.append([text, positions])
         self.numberOfMentions = numberOfMentions
         self.list_keywords = list_keywords
-
-
-
 
 
 if __name__ == "__main__":

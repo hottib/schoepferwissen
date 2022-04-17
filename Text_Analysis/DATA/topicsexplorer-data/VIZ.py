@@ -30,4 +30,5 @@ print('Doc-Topic shape: %s' % str(np.array(movies_model_data['doc_topic_dists'])
 movies_vis_data = pyLDAvis.prepare(**movies_model_data)
 
 
+
 pyLDAvis.display(movies_vis_data)

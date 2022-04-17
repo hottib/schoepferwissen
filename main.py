@@ -117,15 +117,17 @@ if __name__ == '__main__':
         Drachentoeter_channel_url,
         UBC_channel_url
     ]
+
     #EINE CSV ERSTELLEN
     #collect_channel_data = CollectChannelData(VEITCLUB_channel_url)
     #collect_channel_data.update()
 
-
     #Multiple CSVs erstellen
-
     for item in all_channels:
-        collect_channel_data = CollectChannelData(item)
-        #collect_channel_data.process_channel()
-        collect_channel_data.create_empty_csv(features)
+        try:
+            collect_channel_data = CollectChannelData(item)
+            collect_channel_data.process_channel()
+            #collect_channel_data.create_empty_csv(features)
+        except:
+            print(item +" hat nicht geklappt")
     print("FERTIG HAT ALLES GEKLAPPT")
