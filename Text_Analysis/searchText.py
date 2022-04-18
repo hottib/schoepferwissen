@@ -16,6 +16,7 @@ class searchText:
         self.numberOfMentions = 0
         self.keywordPositions = 0
         self.list_keywords = []
+        self.list_sentences = []
         self.search4keyword()
         self.getSentences()
 
@@ -27,6 +28,7 @@ class searchText:
             with open(key[0], "r") as f:
                 data = f.read()
             blob = TextBlobDE(data)
+            counter = 0
             for sentence in blob.sentences:
                 if self.keyword in sentence:
                     print("_"*80)
@@ -34,7 +36,8 @@ class searchText:
                     id = key[0][-23:-11]
                     print("Find keyword in: " + id)
                     print("sentence with keyword: " )
-                    print(sentence)
+                    self.list_sentences.append({"index":counter, "id":str(id), "result":str(sentence)})
+                    counter += 1
                     print("_"*80)
                     print("<3"*40)
 
