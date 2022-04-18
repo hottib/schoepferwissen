@@ -3,9 +3,9 @@ import pandas as pd
 from pathlib import Path
 from st_aggrid import AgGrid
 from ast import literal_eval
-import os
-import glob
-import re
+from collections import ChainMap
+import os, glob, re
+import Text_Analysis.searchText as ft_search
 
 def find_channel(lst, key, value):
     for i, dic in enumerate(lst):
@@ -14,9 +14,14 @@ def find_channel(lst, key, value):
     return -1
 
 def convert_time(seconds):
-    timesek = int(int(seconds) // 60)
-    timemin = int(int(seconds) % 60)
-    converted = f"{timemin:02d}:{timesek:02d}"
+    timehour = int(int(seconds) // 3600)
+    timemin = int(int(seconds) // 60)
+    timemin2 = int(timemin % 60)
+    timesek = int(int(seconds) % 60)
+    if timemin > 120:
+        converted = f"{timehour:02d}:{timemin2:02d}:{timesek:02d}"
+    else:
+        converted = f"{timemin:02d}:{timesek:02d}"
     return converted
 
 def cleanup_tags(tag_string):
@@ -122,14 +127,35 @@ grid_options = {
                 },
             ]
         }
-    ],
+    ]
+}
+searchgrid_options = {
+    "defaultColDef": {
+        "resizable": True,
+        "sortable": True,
+    },
+    "columnDefs": [
+        {
+            "headerName": "ID",
+            "field": "id",
+            "mx-width": 200,
+
+        },
+        {
+            "headerName": "Ergebnis",
+            "field": "result",
+            "wrapText": True,
+            "autoHeight": True,
+        },
+    ]
 }
 st.set_page_config(page_title="Schöpferwissen",layout='wide')
 
-filefolder = r"\\DATEN\Schöpferwissen\.DATA"
+basefolder = r"\\DATEN\Schöpferwissen"
+datafolder = basefolder + r"\.DATA"
 
 #if we don't find above path, ask for a new one
-while not Path(filefolder).exists():
+while not Path(datafolder).exists():
     with st.form('csv_form'):
         newfolder = st.text_input('CSV-Verzeichnis eingeben:', '')
         submitted = st.form_submit_button("OK")
@@ -140,9 +166,9 @@ while not Path(filefolder).exists():
             newfolder = None
             st.stop()
         else:
-            filefolder = newfolder
+            datafolder = newfolder
 
-loaded_csvs = glob.glob(os.path.join(filefolder, '*.csv'))
+loaded_csvs = glob.glob(os.path.join(datafolder, '*.csv'))
 all_csvs = {}
 
 # make a dict with all csvs
@@ -158,7 +184,15 @@ for i in range(len(loaded_csvs)):
     all_csvs[name] = loaded_csvs[i]
 
 lastchosen = 'None'
-chosen_csv = st.radio('', [[*all_csvs][i] for i in range(len(all_csvs)) if not "merge" in [*all_csvs][i]])
+if 'total_length' not in st.session_state: st.session_state.total_length = ''
+
+col1, col2 = st.columns([2, 1])
+with col1:
+    chosen_csv = st.radio('', [[*all_csvs][i] for i in range(len(all_csvs)) if not "merge" in [*all_csvs][i]])
+with col2:
+    titlefilter = st.text_input('Titelsuche', '')
+    descriptionfilter = st.text_input('Beschreibungssuche', '')
+    tagfilter = st.text_input('Tagsuche', '')
 
 #open chosen channel data and merge automated and manual csvs
 with open(all_csvs[chosen_csv], 'r', encoding='utf-8') as csv:
@@ -170,16 +204,16 @@ with open(all_csvs[chosen_csv], 'r', encoding='utf-8') as csv:
             imported2 = pd.read_csv(csv2, encoding='utf-8')
             imported = pd.merge(imported, imported2, on='id', sort=False, how="left", validate="one_to_one")
 
-col1, col2, col3 = st.columns(3)
-with col1:
-    titlefilter = st.text_input('Titelsuche', '')
-    st.write('# ', chosen_csv)
-with col2:
-    tagfilter = st.text_input('Tagsuche', '')
+col3, col4 = st.columns([2, 1])
 with col3:
-    descriptionfilter = st.text_input('Beschreibungssuche', '')
-    fulltextfilter = st.text_input('Volltextsuche', '')
-
+    st.write('# ', chosen_csv)
+    st.write("(Gesamtspielzeit: ", convert_time(int(imported['length'].sum())), ")")
+with col4:
+    if not Path(basefolder).exists():
+        st.warning("Videoarchiv nicht gefunden. Volltextsuche ist deaktiviert.")
+        fulltextfilter = ''
+    else:
+        fulltextfilter = st.text_input('Volltextsuche', '')
 
 #filter/drop some stuff before displaying
 caption_codes = {'a.de': 'auto de', 'a.en': 'auto en', 'a.fr': 'auto fr', 'a.it': 'auto it', 'a.vi': 'auto vi', 'a.es': 'auto es', 'a.nl': 'auto nl', 'a.ko': 'auto ko', 'a.ru': 'auto ru', '{}': ''}
@@ -190,7 +224,7 @@ try:
     imported.loc[imported['description'].str.contains('<NA>', na= True), 'description'] = ''
     #imported['keywords'] = imported['keywords'].str.replace(r'\[\'\]', '')
 except:
-    egal = 'egal'
+    pass
 
 #convert seconds to min:sek format, clean up keywords
 imported['length'] = imported['length'].apply(convert_time)
@@ -205,7 +239,13 @@ try:
 except:
     imported_filt = imported
 
-interactive = AgGrid(imported_filt, grid_options, editable=True, fit_columns_on_grid_load=True)
+interactive = AgGrid(imported_filt, grid_options, fit_columns_on_grid_load=True)
+
+search = ft_search.searchText(fulltextfilter, os.path.join(basefolder, chosen_csv))
+
+if fulltextfilter != '':
+    searchresults = pd.DataFrame(search.list_sentences)
+    search_table = AgGrid(searchresults, searchgrid_options)
 
 if st.button('Speichern'):
      interactive["data"]
