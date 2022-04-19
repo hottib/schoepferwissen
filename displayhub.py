@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from pathlib import Path
+from pathlib import Path, PurePath
 from st_aggrid import AgGrid
 from ast import literal_eval
 from collections import ChainMap
@@ -133,6 +133,7 @@ searchgrid_options = {
     "defaultColDef": {
         "resizable": True,
         "sortable": True,
+        "editable": True,
     },
     "columnDefs": [
         {
@@ -184,6 +185,7 @@ for i in range(len(loaded_csvs)):
     all_csvs[name] = loaded_csvs[i]
 
 lastchosen = 'None'
+lastftfilter = ''
 if 'total_length' not in st.session_state: st.session_state.total_length = ''
 
 col1, col2 = st.columns([2, 1])
@@ -199,7 +201,6 @@ with open(all_csvs[chosen_csv], 'r', encoding='utf-8') as csv:
     imported = pd.read_csv(csv, encoding='utf-8')
     current_index = [*all_csvs].index(chosen_csv)
     if "merge" in [*all_csvs][current_index+1]:
-
         with open(list(all_csvs.values())[current_index+1], 'r', encoding='utf-8') as csv2:
             imported2 = pd.read_csv(csv2, encoding='utf-8')
             imported = pd.merge(imported, imported2, on='id', sort=False, how="left", validate="one_to_one")
@@ -241,14 +242,39 @@ except:
 
 interactive = AgGrid(imported_filt, grid_options, fit_columns_on_grid_load=True)
 
-search = ft_search.searchText(fulltextfilter, os.path.join(basefolder, chosen_csv))
+st.write(PurePath(basefolder).joinpath(chosen_csv))
 
-if fulltextfilter != '':
+if fulltextfilter != lastftfilter:
+    search = ft_search.searchText(fulltextfilter, PurePath(basefolder).joinpath(chosen_csv))
     searchresults = pd.DataFrame(search.list_sentences)
     search_table = AgGrid(searchresults, searchgrid_options)
+    lastftfilter = fulltextfilter
+
+if 'reallysave' not in st.session_state: st.session_state['reallysave'] = False
+if 'savefile' not in st.session_state: st.session_state['savefile'] = ''
+if 'tosave' not in st.session_state: st.session_state['tosave'] = imported_filt
+if 'oldsave' not in st.session_state: st.session_state['oldsave'] = imported_filt
 
 if st.button('Speichern'):
-     interactive["data"]
-else:
-     st.write('hier wird noch nix gemacht')
+    st.session_state.tosave = interactive["data"].drop(['publish_date', 'title', 'description', 'keywords', 'length', 'views', 'age_restricted', 'yt_caption_info'], axis=1)
+    st.session_state.savefile = [s for s in loaded_csvs if chosen_csv+'_manuell' in s]
+    st.session_state.oldsave = pd.read_csv(st.session_state.savefile[0], encoding='utf-8')
+    st.write("### Änderungen:")
+    df_diff = pd.concat([st.session_state.oldsave,st.session_state.tosave]).drop_duplicates(subset=['sentiments', 'effects', 'sound', 'behaviour', 'tags', 'people', 'location', 'CDS'], keep=False)
+    df_diff
+    st.session_state['reallysave'] = True
 
+if st.session_state['reallysave'] == True:
+    if st.button('Wirklich speichern?'):
+        x = Path(st.session_state.savefile[0])
+        try:
+            x.replace(x.with_suffix('.bak'))
+            st.session_state.tosave.to_csv(Path(x), index=False)
+            st.success("Saved new CSV")
+            st.session_state['reallysave'] = False
+        except:
+            st.error("Something went wrong")
+            st.session_state['reallysave'] = False
+
+    with st.expander("Vorher/Nachher anzeigen"):
+        st.write(st.session_state.tosave.compare(st.session_state.oldsave, align_axis=0, keep_equal=True).rename(index={'self': 'neu', 'other': 'alt'}, level=-1))
