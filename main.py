@@ -1,5 +1,6 @@
 from pytube import Channel, YouTube
 import pandas as pd
+import os
 
 class CollectChannelData: 
     def __init__(self, channel_url):
@@ -27,7 +28,8 @@ class CollectChannelData:
  
         channel = Channel(self.channel_url)
         channel_name = channel.channel_name
-        filename= "DATA/"+ channel_name + "_manuell.csv"
+        basefolder = r"\\DATEN\Schöpferwissen\.DATA"
+        filename = os.path.join(basefolder, channel_name + "_manuell.csv")
         try:
             df = pd.DataFrame(filename)
             print("File already exists. Use self.update for adding")
