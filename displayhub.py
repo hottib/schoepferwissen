@@ -4,7 +4,7 @@ from pathlib import Path, PurePath
 from st_aggrid import AgGrid
 from ast import literal_eval
 from collections import ChainMap
-import os, glob, re
+import os, glob, re, numpy
 import Text_Analysis.searchText as ft_search
 
 def find_channel(lst, key, value):
@@ -18,7 +18,7 @@ def convert_time(seconds):
     timemin = int(int(seconds) // 60)
     timemin2 = int(timemin % 60)
     timesek = int(int(seconds) % 60)
-    if timemin > 120:
+    if timemin > 240:
         converted = f"{timehour:02d}:{timemin2:02d}:{timesek:02d}"
     else:
         converted = f"{timemin:02d}:{timesek:02d}"
@@ -29,7 +29,6 @@ def cleanup_tags(tag_string):
     tag_list = literal_eval(tag_string)
     new_string = ', '.join([i for i in tag_list])
     return new_string
-
 
 #define aggrid styling
 grid_options = {
@@ -49,6 +48,11 @@ grid_options = {
                 {
                     "headerName": "ID",
                     "field": "id",
+                },
+                {
+                    "headerName": "archiv.",
+                    "field": "platform",
+                    "width": 100,
                 },
                 {
                     "headerName": "Titel",
@@ -76,47 +80,47 @@ grid_options = {
                     "headerName": "Sprache",
                     "field": "yt_caption_info",
                 },
-                {
-                    "headerName": "18+",
-                    "field": "age_restricted",
-                },
+#                {
+#                    "headerName": "18+",
+#                    "field": "age_restricted",
+#                },
             ]
         },
         {
             "headerName": 'manuell',
             "children": [
+#                {
+#                    "headerName": "sentiments",
+#                    "field": "sentiments",
+#                    "editable": True,
+#                },
                 {
-                    "headerName": "sentiments",
-                    "field": "sentiments",
-                    "editable": True,
-                },
-                {
-                    "headerName": "effects",
+                    "headerName": "Effecte",
                     "field": "effects",
                     "editable": True,
                 },
                 {
-                    "headerName": "sound",
+                    "headerName": "Ton",
                     "field": "sound",
                     "editable": True,
                 },
-                {
-                    "headerName": "behaviour",
-                    "field": "behaviour",
-                    "editable": True,
-                },
+#                {
+#                    "headerName": "behaviour",
+#                    "field": "behaviour",
+#                    "editable": True,
+#                },
                 {
                     "headerName": "Tags",
                     "field": "tags",
                     "editable": True,
                 },
                 {
-                    "headerName": "Menschen",
+                    "headerName": "Wer",
                     "field": "people",
                     "editable": True,
                 },
                 {
-                    "headerName": "wo",
+                    "headerName": "Wo",
                     "field": "location",
                     "editable": True,
                 },
@@ -208,13 +212,20 @@ with open(all_csvs[chosen_csv], 'r', encoding='utf-8') as csv:
 col3, col4 = st.columns([2, 1])
 with col3:
     st.write('# ', chosen_csv)
-    st.write("(Gesamtspielzeit: ", convert_time(int(imported['length'].sum())), ")")
+    st.write(str(imported.shape[0]), " Videos (Gesamtspielzeit: ", convert_time(int(imported['length'].sum())), ")")
 with col4:
     if not Path(basefolder).exists():
         st.warning("Videoarchiv nicht gefunden. Volltextsuche ist deaktiviert.")
         fulltextfilter = ''
     else:
         fulltextfilter = st.text_input('Volltextsuche', '')
+
+#merge with list of archived videos
+archived = pd.read_csv(PurePath(basefolder).joinpath(chosen_csv, 'download-archive.txt'), sep=" ", header=None)
+archived.columns = ["platform", "id"]
+archived['platform'] = '✓'
+imported = pd.merge(imported, archived, on='id', how='outer')
+imported['platform'] = imported['platform'].replace(numpy.nan, "×")
 
 #filter/drop some stuff before displaying
 caption_codes = {'a.de': 'auto de', 'a.en': 'auto en', 'a.fr': 'auto fr', 'a.it': 'auto it', 'a.vi': 'auto vi', 'a.es': 'auto es', 'a.nl': 'auto nl', 'a.ko': 'auto ko', 'a.ru': 'auto ru', '{}': ''}
@@ -233,16 +244,16 @@ imported['keywords'] = imported['keywords'].apply(cleanup_tags)
 
 #apply user filters and render table
 try:
-    filt1 = imported['title'].str.contains(titlefilter, na= False)
-    filt2 = imported['description'].str.contains(descriptionfilter, na= False)
-    filt3 = imported['keywords'].str.contains(tagfilter, na= False)
+    filt1 = imported['title'].str.contains(titlefilter, na=False, case=False)
+    filt2 = imported['description'].str.contains(descriptionfilter, na=False, case=False)
+    filt3 = imported['keywords'].str.contains(tagfilter, na=False, case=False)
     imported_filt = imported.loc[filt1 & filt2 & filt3]
 except:
     imported_filt = imported
 
-interactive = AgGrid(imported_filt, grid_options, fit_columns_on_grid_load=True)
+interactive = AgGrid(imported_filt, grid_options, fit_columns_on_grid_load=True, allow_unsafe_jscode=True)
 
-st.write(PurePath(basefolder).joinpath(chosen_csv))
+st.write(PurePath(basefolder).joinpath(chosen_csv), archived.shape[0])
 
 if fulltextfilter != lastftfilter:
     search = ft_search.searchText(fulltextfilter, PurePath(basefolder).joinpath(chosen_csv))
@@ -256,7 +267,7 @@ if 'tosave' not in st.session_state: st.session_state['tosave'] = imported_filt
 if 'oldsave' not in st.session_state: st.session_state['oldsave'] = imported_filt
 
 if st.button('Speichern'):
-    st.session_state.tosave = interactive["data"].drop(['publish_date', 'title', 'description', 'keywords', 'length', 'views', 'age_restricted', 'yt_caption_info'], axis=1)
+    st.session_state.tosave = interactive["data"].drop(['publish_date', 'title', 'description', 'keywords', 'length', 'views', 'age_restricted', 'yt_caption_info', 'platform'], axis=1)
     st.session_state.savefile = [s for s in loaded_csvs if chosen_csv+'_manuell' in s]
     st.session_state.oldsave = pd.read_csv(st.session_state.savefile[0], encoding='utf-8')
     st.write("### Änderungen:")
@@ -276,5 +287,5 @@ if st.session_state['reallysave'] == True:
             st.error("Something went wrong")
             st.session_state['reallysave'] = False
 
-    with st.expander("Vorher/Nachher anzeigen"):
-        st.write(st.session_state.tosave.compare(st.session_state.oldsave, align_axis=0, keep_equal=True).rename(index={'self': 'neu', 'other': 'alt'}, level=-1))
+#    with st.expander("Vorher/Nachher anzeigen"):
+#        st.write(st.session_state.tosave.compare(st.session_state.oldsave, align_axis=0, keep_equal=True).rename(index={'self': 'neu', 'other': 'alt'}, level=-1))
