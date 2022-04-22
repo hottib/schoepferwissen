@@ -5,7 +5,7 @@ import datetime
 
 class VideoManipulation:
     
-  def __init__(self, input = 1, ouput_path = "DATA\\", mode = "holistic"):
+  def __init__(self, input = 1, ouput_path = "DATA\\", mode = "pose"):
     self.cap = cv2.VideoCapture(input)
     self.datetime = datetime.datetime.now()
     self.filename = self.datetime.ctime().replace(":", "_").replace(" ", "_")
