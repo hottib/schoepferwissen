@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 from pathlib import Path, PurePath
-from st_aggrid import AgGrid
+from st_aggrid import AgGrid, GridUpdateMode, JsCode
 from ast import literal_eval
 from collections import ChainMap
 import os, glob, re, numpy
@@ -44,6 +44,7 @@ grid_options = {
                 {
                     "headerName": "Datum",
                     "field": "publish_date",
+                    "width": 250,
 
                 },
                 {
@@ -68,10 +69,12 @@ grid_options = {
                 {
                     "headerName": "Länge",
                     "field": "length",
+                    "width": 160,
                 },
                 {
                     "headerName": "Views",
                     "field": "views",
+                    "width": 150,
                 },
                 {
                     "headerName": "YT-Tags",
@@ -96,21 +99,9 @@ grid_options = {
 #                    "editable": True,
 #                },
                 {
-                    "headerName": "Effecte",
-                    "field": "effects",
-                },
-                {
-                    "headerName": "Ton",
-                    "field": "sound",
-                },
-#                {
-#                    "headerName": "behaviour",
-#                    "field": "behaviour",
-#                    "editable": True,
-#                },
-                {
-                    "headerName": "Tags",
-                    "field": "tags",
+                    "headerName": "Was",
+                    "field": "behaviour",
+                    "width": 600,
                 },
                 {
                     "headerName": "Wer",
@@ -123,6 +114,22 @@ grid_options = {
                 {
                     "headerName": "CDS",
                     "field": "CDS",
+                    "cellEditor": "agSelectCellEditor",
+                    "cellEditorParams": {
+                        'values': [' ','C','D','S','CD','CS','DS','CDS']
+                    }
+                },
+                {
+                    "headerName": "Effekte",
+                    "field": "effects",
+                },
+                {
+                    "headerName": "Ton",
+                    "field": "sound",
+                },
+                {
+                    "headerName": "Tags",
+                    "field": "tags",
                 },
             ]
         }
@@ -253,7 +260,7 @@ except:
     imported_filt = imported
 
 if 'interactive' not in st.session_state: st.session_state['interactive'] = imported_filt
-st.session_state.interactive = AgGrid(imported_filt, grid_options, fit_columns_on_grid_load=True, allow_unsafe_jscode=True)
+st.session_state.interactive = AgGrid(imported_filt, grid_options, fit_columns_on_grid_load=True, allow_unsafe_jscode=True, update_mode='VALUE_CHANGED')
 
 st.write(PurePath(basefolder).joinpath(chosen_csv), archived.shape[0])
 
