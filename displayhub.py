@@ -35,6 +35,7 @@ grid_options = {
     "defaultColDef": {
         "resizable": True,
         "sortable": True,
+        "editable": True,
     },
     "columnDefs": [
         {
@@ -97,12 +98,10 @@ grid_options = {
                 {
                     "headerName": "Effecte",
                     "field": "effects",
-                    "editable": True,
                 },
                 {
                     "headerName": "Ton",
                     "field": "sound",
-                    "editable": True,
                 },
 #                {
 #                    "headerName": "behaviour",
@@ -112,22 +111,18 @@ grid_options = {
                 {
                     "headerName": "Tags",
                     "field": "tags",
-                    "editable": True,
                 },
                 {
                     "headerName": "Wer",
                     "field": "people",
-                    "editable": True,
                 },
                 {
                     "headerName": "Wo",
                     "field": "location",
-                    "editable": True,
                 },
                 {
                     "headerName": "CDS",
                     "field": "CDS",
-                    "editable": True,
                 },
             ]
         }
@@ -225,7 +220,13 @@ archived = pd.read_csv(PurePath(basefolder).joinpath(chosen_csv, 'download-archi
 archived.columns = ["platform", "id"]
 archived['platform'] = '✓'
 imported = pd.merge(imported, archived, on='id', how='outer')
+#and clean up possible newly introduced nans
 imported['platform'] = imported['platform'].replace(numpy.nan, "×")
+imported['age_restricted'] = imported['age_restricted'].replace(numpy.nan, False)
+imported['keywords'] = imported['keywords'].replace(numpy.nan, "[]")
+number_cols = ['length', 'views']
+imported[number_cols] = imported[number_cols].replace(numpy.nan, 0)
+imported = imported.replace(numpy.nan, " ")
 
 #filter/drop some stuff before displaying
 caption_codes = {'a.de': 'auto de', 'a.en': 'auto en', 'a.fr': 'auto fr', 'a.it': 'auto it', 'a.vi': 'auto vi', 'a.es': 'auto es', 'a.nl': 'auto nl', 'a.ko': 'auto ko', 'a.ru': 'auto ru', '{}': ''}
