@@ -229,7 +229,7 @@ imported[number_cols] = imported[number_cols].replace(numpy.nan, 0)
 imported = imported.replace(numpy.nan, " ")
 
 #filter/drop some stuff before displaying
-caption_codes = {'a.de': 'auto de', 'a.en': 'auto en', 'a.fr': 'auto fr', 'a.it': 'auto it', 'a.vi': 'auto vi', 'a.es': 'auto es', 'a.nl': 'auto nl', 'a.ko': 'auto ko', 'a.ru': 'auto ru', '{}': ''}
+caption_codes = {'a.de': 'auto de', 'a.en': 'auto en', 'a.fr': 'auto fr', 'a.it': 'auto it', 'a.vi': 'auto vi', 'a.es': 'auto es', 'a.nl': 'auto nl', 'a.ko': 'auto ko', 'a.ru': 'auto ru', 'a.id': 'auto id', '{}': ''}
 try:
     imported = imported.drop(['yt_caption_tracks', 'vid_info'], axis=1)
     for c in caption_codes:
