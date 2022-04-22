@@ -252,7 +252,8 @@ try:
 except:
     imported_filt = imported
 
-interactive = AgGrid(imported_filt, grid_options, fit_columns_on_grid_load=True, allow_unsafe_jscode=True)
+if 'interactive' not in st.session_state: st.session_state['interactive'] = imported_filt
+st.session_state.interactive = AgGrid(imported_filt, grid_options, fit_columns_on_grid_load=True, allow_unsafe_jscode=True)
 
 st.write(PurePath(basefolder).joinpath(chosen_csv), archived.shape[0])
 
@@ -267,25 +268,32 @@ if 'savefile' not in st.session_state: st.session_state['savefile'] = ''
 if 'tosave' not in st.session_state: st.session_state['tosave'] = imported_filt
 if 'oldsave' not in st.session_state: st.session_state['oldsave'] = imported_filt
 
-if st.button('Speichern'):
-    st.session_state.tosave = interactive["data"].drop(['publish_date', 'title', 'description', 'keywords', 'length', 'views', 'age_restricted', 'yt_caption_info', 'platform'], axis=1)
-    st.session_state.savefile = [s for s in loaded_csvs if chosen_csv+'_manuell' in s]
-    st.session_state.oldsave = pd.read_csv(st.session_state.savefile[0], encoding='utf-8')
-    st.write("### Änderungen:")
-    df_diff = pd.concat([st.session_state.oldsave,st.session_state.tosave]).drop_duplicates(subset=['sentiments', 'effects', 'sound', 'behaviour', 'tags', 'people', 'location', 'CDS'], keep=False)
-    df_diff
-    st.session_state['reallysave'] = True
+with st.form("saveform", clear_on_submit=True):
+    if st.form_submit_button('Speichern'):
+        st.session_state.tosave = st.session_state.interactive["data"].drop(['publish_date', 'title', 'description', 'keywords', 'length', 'views', 'age_restricted', 'yt_caption_info', 'platform'], axis=1)
+        st.session_state.savefile = [s for s in loaded_csvs if chosen_csv+'_manuell' in s]
+        st.session_state.oldsave = pd.read_csv(st.session_state.savefile[0], encoding='utf-8')
+        st.write("### Änderungen:")
+        df_diff = pd.concat([st.session_state.oldsave,st.session_state.tosave]).drop_duplicates(subset=['sentiments', 'effects', 'sound', 'behaviour', 'tags', 'people', 'location', 'CDS'], keep=False)
+        df_diff
+        st.session_state['reallysave'] = True
 
-if st.session_state['reallysave'] == True:
-    if st.button('Wirklich speichern?'):
-        x = Path(st.session_state.savefile[0])
-        try:
-            x.replace(x.with_suffix('.bak'))
-            st.session_state.tosave.to_csv(Path(x), index=False)
-            st.success("Saved new CSV")
-            st.session_state['reallysave'] = False
-        except:
-            st.error("Something went wrong")
+    if st.session_state['reallysave'] == True:
+        reallybutton = st.empty()
+        notreallybutton = st.empty()
+        if reallybutton.form_submit_button('Wirklich speichern'):
+            x = Path(st.session_state.savefile[0])
+            try:
+                x.replace(x.with_suffix('.bak'))
+                st.session_state.tosave.to_csv(Path(x), index=False)
+                st.success("Saved new CSV")
+                st.session_state['reallysave'] = False
+            except:
+                st.error("Something went wrong")
+                st.session_state['reallysave'] = False
+        elif notreallybutton.form_submit_button('Abbrechen'):
+            reallybutton.empty()
+            notreallybutton.empty()
             st.session_state['reallysave'] = False
 
 #    with st.expander("Vorher/Nachher anzeigen"):
