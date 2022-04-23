@@ -257,7 +257,7 @@ try:
     filt2 = imported['description'].str.contains(descriptionfilter, na=False, case=False)
     filt3 = imported['keywords'].str.contains(tagfilter, na=False, case=False)
     filt3 = pd.concat([filt3, imported['tags'].str.contains(tagfilter, na=False, case=False)], axis=1)
-    imported_filt = imported.loc[filt1 & filt2 & filt3]
+    imported_filt = imported.loc[filt1 & filt2 & filt3.any(axis=1)]
 except:
     imported_filt = imported
 
