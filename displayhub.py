@@ -7,6 +7,7 @@ from collections import ChainMap
 import os, glob, re, numpy
 import Text_Analysis.searchText as ft_search
 
+#don't remember what this was for :D
 def find_channel(lst, key, value):
     for i, dic in enumerate(lst):
         if dic[key] == value:
@@ -262,14 +263,17 @@ except:
 if 'interactive' not in st.session_state: st.session_state['interactive'] = imported_filt
 st.session_state.interactive = AgGrid(imported_filt, grid_options, fit_columns_on_grid_load=True, allow_unsafe_jscode=True, update_mode='VALUE_CHANGED')
 
+#write our current folder in the archive for control
 st.write(PurePath(basefolder).joinpath(chosen_csv), archived.shape[0])
 
+#render an additional table for fulltextsearch
 if fulltextfilter != lastftfilter:
     search = ft_search.searchText(fulltextfilter, PurePath(basefolder).joinpath(chosen_csv))
     searchresults = pd.DataFrame(search.list_sentences)
     search_table = AgGrid(searchresults, searchgrid_options)
     lastftfilter = fulltextfilter
 
+#prepare some variables for our clunky save mechanism
 if 'reallysave' not in st.session_state: st.session_state['reallysave'] = False
 if 'savefile' not in st.session_state: st.session_state['savefile'] = ''
 if 'tosave' not in st.session_state: st.session_state['tosave'] = imported_filt
