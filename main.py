@@ -38,13 +38,14 @@ class CollectChannelData:
         print(f"Processing manual CSV for channel {channel_name}...")
         for url in channel.video_urls:
             video_id = url.replace("https://www.youtube.com/watch?v=", "")
-            print(video_id, "\r")
+            print(f"\r{video_id}", end="")
             new_row = listofblanks
             new_row[0] = video_id
             df.loc[len(df.index)]= new_row
         df.to_csv(filename, index=False)
-        print("="*100)
+        print("\r"+"="*100)
         print("Saved as:", filename)
+        print("="*100)
 
 
     def process_channel(self):
@@ -66,9 +67,9 @@ class CollectChannelData:
             yt = YouTube(url)
             yt.bypass_age_gate()
             yt.check_availability()
-            print(video_id, "\r")
             publish_date = yt.publish_date
-            id = url.replace("https://www.youtube.com/watch?v=", "")
+            video_id = url.replace("https://www.youtube.com/watch?v=", "")
+            print(f"\r{video_id}", end="")
             title = yt.title
             description = yt.description
             tags = yt.keywords
@@ -80,7 +81,7 @@ class CollectChannelData:
             yt_caption_info = yt.captions
             vid_info = yt.vid_info
             new_row[0] = publish_date
-            new_row[1] = id
+            new_row[1] = video_id
             new_row[2] = title
             new_row[3] = description
             new_row[4] = tags
@@ -90,7 +91,7 @@ class CollectChannelData:
             new_row[8] = yt_caption_info
             new_row[9] = vid_info
             df.loc[len(df.index)]= new_row
-        print("="*100)
+        print("\r"+"="*100)
         print("Saved as:", filename)
         print("="*100)
         df.to_csv(filename, index=False)
@@ -121,6 +122,12 @@ if __name__ == '__main__':
     Honett_channel_url="https://www.youtube.com/channel/UC2BK1JGDSB0RFSJdijEBnpA"
     #Nebenkanal "WISSEN - NICHT VON DIESER WELT"
     WISSEN_channel_url="https://www.youtube.com/channel/UC5Sr_xoXTkBThtqthLwOkPg"
+    #Nebenkanal "Der verlorene Zwilling TV"
+    Zwilling_channel_url="https://www.youtube.com/channel/UCMCVs7vtSk2aTLDaGUkHQYQ"
+    #Nebenkanal "PLANET VEIT"
+    PLANET_channel_url="https://www.youtube.com/channel/UC0KvN280Qjkh4Albvhibt1A"
+    #Nebenkanal "WER HAT ANGST VORM SCHWARZEN MANN"
+    SCHWARZ_channel_url="https://www.youtube.com/channel/UCa7jxqU8qeHABn_Y4-GE1Uw"
 
     all_channels = [
         Schoepf_channel_url,
@@ -133,7 +140,10 @@ if __name__ == '__main__':
         UBC_channel_url,
         unendlich_channel_url,
         Honett_channel_url,
-        WISSEN_channel_url
+        WISSEN_channel_url,
+        Zwilling_channel_url,
+        PLANET_channel_url,
+        SCHWARZ_channel_url
     ]
 
     #EINE CSV ERSTELLEN
@@ -148,4 +158,4 @@ if __name__ == '__main__':
             collect_channel_data.create_empty_csv(features)
         except:
             print(item +" hat nicht geklappt")
-    print("FERTIG HAT ALLES GEKLAPPT")
+    print("FERTIG")
