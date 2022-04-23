@@ -277,19 +277,23 @@ if fulltextfilter != lastftfilter:
 
 #watch a specific video from the archive by inputting its ID
 video_id = st.text_input('Video anschauen (ID eingeben)', '')
+use_archive = st.checkbox('aus dem Archiv laden')
 if video_id != '':
     if video_id in imported_filt['id'].values:
-        video_folder = Path(basefolder).joinpath(chosen_csv)
-        files_with_id = video_folder.glob(f'*{video_id}*')
         video_file_list = []
-        for f in files_with_id:
-            if f.suffix in ['.mp4', '.mkv', '.webm']: video_file_list.append(f)
-        if len(video_file_list) > 0:
-            video_file = open(video_file_list[0], 'rb')
-            video_bytes = video_file.read()
-            st.video(video_bytes, format="video/mp4")
+        if use_archive:
+            video_folder = Path(basefolder).joinpath(chosen_csv)
+            files_with_id = video_folder.glob(f'*{video_id}*')
+            for f in files_with_id:
+                if f.suffix in ['.mp4', '.mkv', '.webm']: video_file_list.append(f)
+            if len(video_file_list) > 0:
+                video_file = open(video_file_list[0], 'rb')
+                video_bytes = video_file.read()
+                st.video(video_bytes, format="video/mp4")
+            else:
+                st.error("Videodatei nicht gefunden")
         else:
-            st.error("Videodatei nicht gefunden")
+            st.video(f"https://youtu.be/{video_id}")
     else:
         st.error("ID nicht gefunden")
 
@@ -298,6 +302,7 @@ if 'reallysave' not in st.session_state: st.session_state['reallysave'] = False
 if 'savefile' not in st.session_state: st.session_state['savefile'] = ''
 if 'tosave' not in st.session_state: st.session_state['tosave'] = imported_filt
 if 'oldsave' not in st.session_state: st.session_state['oldsave'] = imported_filt
+st.write(" ")
 
 with st.form("saveform", clear_on_submit=True):
     if st.form_submit_button('Tabellenänderungen speichern'):
