@@ -200,8 +200,8 @@ with col1:
     chosen_csv = st.radio('', [[*all_csvs][i] for i in range(len(all_csvs)) if not "merge" in [*all_csvs][i]])
 with col2:
     titlefilter = st.text_input('Titelsuche', '')
-    descriptionfilter = st.text_input('Beschreibungssuche', '')
-    tagfilter = st.text_input('Tagsuche', '')
+    descriptionfilter = st.text_input('Beschreibungssuche (YT)', '')
+    tagfilter = st.text_input('Tagsuche (YT & manuell)', '')
 
 #open chosen channel data and merge automated and manual csvs
 with open(all_csvs[chosen_csv], 'r', encoding='utf-8') as csv:
@@ -251,15 +251,17 @@ except:
 imported['length'] = imported['length'].apply(convert_time)
 imported['keywords'] = imported['keywords'].apply(cleanup_tags)
 
-#apply user filters and render table
+#apply user filters
 try:
     filt1 = imported['title'].str.contains(titlefilter, na=False, case=False)
     filt2 = imported['description'].str.contains(descriptionfilter, na=False, case=False)
     filt3 = imported['keywords'].str.contains(tagfilter, na=False, case=False)
+    filt3 = pd.concat([filt3, imported['tags'].str.contains(tagfilter, na=False, case=False)], axis=1)
     imported_filt = imported.loc[filt1 & filt2 & filt3]
 except:
     imported_filt = imported
 
+#render main table
 if 'interactive' not in st.session_state: st.session_state['interactive'] = imported_filt
 st.session_state.interactive = AgGrid(imported_filt, grid_options, fit_columns_on_grid_load=True, allow_unsafe_jscode=True, update_mode='VALUE_CHANGED')
 
@@ -273,6 +275,24 @@ if fulltextfilter != lastftfilter:
     search_table = AgGrid(searchresults, searchgrid_options)
     lastftfilter = fulltextfilter
 
+#watch a specific video from the archive by inputting its ID
+video_id = st.text_input('Video anschauen (ID eingeben)', '')
+if video_id != '':
+    if video_id in imported_filt['id'].values:
+        video_folder = Path(basefolder).joinpath(chosen_csv)
+        files_with_id = video_folder.glob(f'*{video_id}*')
+        video_file_list = []
+        for f in files_with_id:
+            if f.suffix in ['.mp4', '.mkv', '.webm']: video_file_list.append(f)
+        if len(video_file_list) > 0:
+            video_file = open(video_file_list[0], 'rb')
+            video_bytes = video_file.read()
+            st.video(video_bytes, format="video/mp4")
+        else:
+            st.error("Videodatei nicht gefunden")
+    else:
+        st.error("ID nicht gefunden")
+
 #prepare some variables for our clunky save mechanism
 if 'reallysave' not in st.session_state: st.session_state['reallysave'] = False
 if 'savefile' not in st.session_state: st.session_state['savefile'] = ''
@@ -280,7 +300,7 @@ if 'tosave' not in st.session_state: st.session_state['tosave'] = imported_filt
 if 'oldsave' not in st.session_state: st.session_state['oldsave'] = imported_filt
 
 with st.form("saveform", clear_on_submit=True):
-    if st.form_submit_button('Speichern'):
+    if st.form_submit_button('Tabellenänderungen speichern'):
         st.session_state.tosave = st.session_state.interactive["data"].drop(['publish_date', 'title', 'description', 'keywords', 'length', 'views', 'age_restricted', 'yt_caption_info', 'platform'], axis=1)
         st.session_state.savefile = [s for s in loaded_csvs if chosen_csv+'_manuell' in s]
         st.session_state.oldsave = pd.read_csv(st.session_state.savefile[0], encoding='utf-8')
@@ -297,10 +317,10 @@ with st.form("saveform", clear_on_submit=True):
             try:
                 x.replace(x.with_suffix('.bak'))
                 st.session_state.tosave.to_csv(Path(x), index=False)
-                st.success("Saved new CSV")
+                st.success("CSV gespeichert")
                 st.session_state['reallysave'] = False
             except:
-                st.error("Something went wrong")
+                st.error("Irgendwas ging schief (sorry)")
                 st.session_state['reallysave'] = False
         elif notreallybutton.form_submit_button('Abbrechen'):
             reallybutton.empty()
