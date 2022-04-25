@@ -338,9 +338,11 @@ with st.form("saveform", clear_on_submit=True):
                 #we keep 10 backup files, with bak0 being the youngest
                 while bakcounter > 0:
                     y = x.with_suffix(f'.bak{bakcounter}')
+                    z = x.with_suffix(f'.bak{bakcounter-1}')
                     if Path(y).exists():
-                        z = x.with_suffix(f'.bak{bakcounter-1}')
-                        y.replace(z)
+                        z.replace(y)
+                    elif Path(z).exists():
+                        z.replace(y)
                     bakcounter += -1
                 x.replace(x.with_suffix(f'.bak{bakcounter}'))
                 st.session_state.newsave.to_csv(Path(x), index=False)
