@@ -263,8 +263,8 @@ except:
     imported_filt = imported
 
 #render main table
-if 'interactive' not in st.session_state: st.session_state['interactive'] = imported_filt
-st.session_state.interactive = AgGrid(imported_filt, grid_options, fit_columns_on_grid_load=True, allow_unsafe_jscode=True, update_mode='VALUE_CHANGED')
+if 'interactive' not in st.session_state: st.session_state['interactive'] = {}
+st.session_state.interactive = AgGrid(imported_filt, grid_options, fit_columns_on_grid_load=True, allow_unsafe_jscode=True, update_mode='VALUE_CHANGED', reload_data=False)
 
 #write our current folder in the archive for control
 st.write(PurePath(basefolder).joinpath(chosen_csv), archived.shape[0])
