@@ -326,6 +326,10 @@ with st.form("saveform", clear_on_submit=True):
             x = Path(st.session_state.savefile[0])
             bakcounter = 9
 
+            #read the latest csv again, in case someone else has made changes in the meantime
+            st.session_state.oldsave = pd.read_csv(st.session_state.savefile[0], encoding='utf-8')
+            st.session_state.oldsave = st.session_state.oldsave.set_index('id')
+
             #merge updated cells into our old csv table and turn IDs back into a column
             st.session_state.oldsave.update(st.session_state.tosave)
             st.session_state.newsave = st.session_state.oldsave.rename_axis('id').reset_index()
