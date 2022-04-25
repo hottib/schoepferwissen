@@ -327,7 +327,6 @@ with st.form("saveform", clear_on_submit=True):
             #merge updated cells into our old csv table and turn IDs back into a column
             st.session_state.oldsave.update(st.session_state.tosave)
             st.session_state.newsave = st.session_state.oldsave.rename_axis('id').reset_index()
-            st.session_state.newsave
 
             try:
                 x.replace(x.with_suffix('.bak'))
