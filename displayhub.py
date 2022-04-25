@@ -300,8 +300,8 @@ if video_id != '':
 #prepare some variables for our clunky save mechanism
 if 'reallysave' not in st.session_state: st.session_state['reallysave'] = False
 if 'savefile' not in st.session_state: st.session_state['savefile'] = ''
-if 'tosave' not in st.session_state: st.session_state['tosave'] = imported_filt
-if 'oldsave' not in st.session_state: st.session_state['oldsave'] = imported_filt
+if 'tosave' not in st.session_state: st.session_state['tosave'] = st.session_state.interactive["data"].drop(['publish_date', 'title', 'description', 'keywords', 'length', 'views', 'age_restricted', 'yt_caption_info', 'platform'], axis=1)
+if 'oldsave' not in st.session_state: st.session_state['oldsave'] = {}
 st.write(" ")
 
 with st.form("saveform", clear_on_submit=True):
@@ -310,6 +310,9 @@ with st.form("saveform", clear_on_submit=True):
         st.session_state.savefile = [s for s in loaded_csvs if chosen_csv+'_manuell' in s]
         st.session_state.oldsave = pd.read_csv(st.session_state.savefile[0], encoding='utf-8')
         st.write("### Änderungen:")
+        #we turn IDs into index for comparing and later updating our dataframes
+        st.session_state.oldsave = st.session_state.oldsave.set_index('id')
+        st.session_state.tosave = st.session_state.tosave.set_index('id')
         df_diff = pd.concat([st.session_state.oldsave,st.session_state.tosave]).drop_duplicates(subset=['sentiments', 'effects', 'sound', 'behaviour', 'tags', 'people', 'location', 'CDS'], keep=False)
         df_diff
         st.session_state['reallysave'] = True
@@ -317,8 +320,15 @@ with st.form("saveform", clear_on_submit=True):
     if st.session_state['reallysave'] == True:
         reallybutton = st.empty()
         notreallybutton = st.empty()
+
         if reallybutton.form_submit_button('Wirklich speichern'):
             x = Path(st.session_state.savefile[0])
+
+            #merge updated cells into our old csv table and turn IDs back into a column
+            st.session_state.oldsave.update(st.session_state.tosave)
+            st.session_state.newsave = st.session_state.oldsave.rename_axis('id').reset_index()
+            st.session_state.newsave
+
             try:
                 x.replace(x.with_suffix('.bak'))
                 st.session_state.tosave.to_csv(Path(x), index=False)
