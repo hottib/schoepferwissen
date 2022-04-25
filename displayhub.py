@@ -51,6 +51,7 @@ grid_options = {
                 {
                     "headerName": "ID",
                     "field": "id",
+                    "width": 250,
                 },
                 {
                     "headerName": "archiv.",
@@ -323,13 +324,21 @@ with st.form("saveform", clear_on_submit=True):
 
         if reallybutton.form_submit_button('Wirklich speichern'):
             x = Path(st.session_state.savefile[0])
+            bakcounter = 9
 
             #merge updated cells into our old csv table and turn IDs back into a column
             st.session_state.oldsave.update(st.session_state.tosave)
             st.session_state.newsave = st.session_state.oldsave.rename_axis('id').reset_index()
 
             try:
-                x.replace(x.with_suffix('.bak'))
+                #we keep 10 backup files, with bak0 being the youngest
+                while bakcounter > 0:
+                    y = x.with_suffix(f'.bak{bakcounter}')
+                    if Path(y).exists():
+                        z = x.with_suffix(f'.bak{bakcounter-1}')
+                        y.replace(z)
+                    bakcounter += -1
+                x.replace(x.with_suffix(f'.bak{bakcounter}'))
                 st.session_state.newsave.to_csv(Path(x), index=False)
                 st.success("CSV gespeichert")
                 st.session_state['reallysave'] = False
