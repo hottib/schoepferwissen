@@ -330,7 +330,7 @@ with st.form("saveform", clear_on_submit=True):
 
             try:
                 x.replace(x.with_suffix('.bak'))
-                st.session_state.tosave.to_csv(Path(x), index=False)
+                st.session_state.newsave.to_csv(Path(x), index=False)
                 st.success("CSV gespeichert")
                 st.session_state['reallysave'] = False
             except:
