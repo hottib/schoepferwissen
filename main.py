@@ -1,16 +1,12 @@
 from pytube import Channel, YouTube
 import pandas as pd
-<<<<<<< HEAD
 import os, glob
-=======
-import os
->>>>>>> remotes/origin/arvog
 
 class CollectChannelData: 
     
 
     
-    def __init__(self, channel_url):
+    def __init__(self, channel_url, basefolder = r"\\DATEN\Schöpferwissen\.DATA"):
         self.hello = "HELLO"
         self.channel_url = channel_url
             #Hauptkanal "Schöpferwissen TV": 938 Videos
@@ -40,10 +36,10 @@ class CollectChannelData:
         Drachentoeter_channel_url,
         UBC_channel_url
         ]
+        self.basefolder = basefolder
 
     def update(self, folderWithCSVs):
         channel = Channel(self.channel_url)
-<<<<<<< HEAD
         
         all_CSVs = glob.glob(folderWithCSVs +"\*_automated.csv")
         for csv in all_CSVs: 
@@ -121,7 +117,6 @@ class CollectChannelData:
                 df.loc[len(df.index)]= new_row
             df.to_csv(filename, index=False)
             print("NEW Filename: " + filename)
-=======
         channel_name = channel.channel_name
         filename= "../DATA/"+ channel_name + "_manuell.csv"
         try:
@@ -139,10 +134,7 @@ class CollectChannelData:
     def create_empty_csv(self, features):
         channel = Channel(self.channel_url)
         channel_name = channel.channel_name
-        basefolder = r"\\DATEN\Schöpferwissen\.DATA"
-        filename = os.path.join(basefolder, channel_name + "_manuell.csv")
->>>>>>> remotes/origin/arvog
-
+        filename = os.path.join(self.basefolder, channel_name + "_manuell.csv")
         if os.path.exists(filename):
             print(f'File {filename} already exists. Skipping.')
             return
@@ -166,7 +158,6 @@ class CollectChannelData:
         df = pd.DataFrame()
         channel = Channel(self.channel_url)
         channel_name = channel.channel_name
-        basefolder = r"\\DATEN\Schöpferwissen\.DATA"
         filename = os.path.join(basefolder, channel_name + "_automated.csv")
 
         if os.path.exists(filename):
@@ -217,7 +208,7 @@ if __name__ == '__main__':
     #Hauptkanal "Schöpferwissen TV": 938 Videos
     Schoepf_channel_url="https://www.youtube.com/channel/UCGQFj8C3sMhxuFJjkANkyKA/videos"
     #Nebenkanal "Der Wahrheit verpflichtet": 994 Videos
-    Warheit_channel_url="https://www.youtube.com/c/DerWahrheitverpflichtet"
+    Wahrheit_channel_url="https://www.youtube.com/c/DerWahrheitverpflichtet"
     #Nebenkanal "Rettung der Menschheit TV": 92 Videos
     Rettung_channel_url="https://www.youtube.com/channel/UC5ZGCLwrKIJrdhYwHYcXCvA/videos"
     #Nebenkanal "Der Weg in deine Freiheit": 32 Videos
@@ -230,8 +221,6 @@ if __name__ == '__main__':
     Drachentoeter_channel_url="https://www.youtube.com/channel/UC4StsLMnfcOuQ374_oGa5sg/videos"
     #Nebenkanal "UBC TV": 11 Videos
     UBC_channel_url="https://www.youtube.com/channel/UCWELnCGV_IYWctpTPiB8-Sw"
-<<<<<<< HEAD
-=======
     #Nebenkanal "u n endlich"
     unendlich_channel_url="https://www.youtube.com/channel/UCyIj6T2W5xQsi7dCbfuJdUw"
     #Nebenkanal "Honett"
@@ -262,14 +251,12 @@ if __name__ == '__main__':
         SCHWARZ_channel_url
     ]
 
->>>>>>> remotes/origin/arvog
     #EINE CSV ERSTELLEN
-    collect_channel_data = CollectChannelData(VEITCLUB_channel_url)
-    collect_channel_data.update("DATA")
+    #collect_channel_data = CollectChannelData(VEITCLUB_channel_url)
+    #collect_channel_data.update("DATA")
 
 
     #Multiple CSVs erstellen
-<<<<<<< HEAD
     """"
     all_channels= [
     Schoepf_channel_url, 
@@ -281,7 +268,7 @@ if __name__ == '__main__':
     Drachentoeter_channel_url,
     UBC_channel_url
     ]
-    """
+
     all_channels= [
     Rettung_channel_url, 
     Freiheit_channel_url, 
@@ -290,7 +277,7 @@ if __name__ == '__main__':
     Drachentoeter_channel_url,
     UBC_channel_url
     ]
-
+    """
 
     """
     for item in all_channels:
@@ -301,13 +288,11 @@ if __name__ == '__main__':
     
     #collect_channel_data.create_empty_csv(features)
     """
-=======
     for item in all_channels:
         try:
-            collect_channel_data = CollectChannelData(item)
+            collect_channel_data = CollectChannelData(item, basefolder= r"DATA")
             collect_channel_data.process_channel()
-            collect_channel_data.create_empty_csv(features)
+            #collect_channel_data.create_empty_csv(features)
         except:
             print(item +" hat nicht geklappt")
     print("FERTIG")
->>>>>>> remotes/origin/arvog
