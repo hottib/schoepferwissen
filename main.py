@@ -158,8 +158,8 @@ class CollectChannelData:
         df = pd.DataFrame()
         channel = Channel(self.channel_url)
         channel_name = channel.channel_name
-        filename = os.path.join(basefolder, channel_name + "_automated.csv")
-
+        filename = os.path.join(self.basefolder, channel_name + "_automated.csv")
+        
         if os.path.exists(filename):
             print(f'File {filename} already exists. Skipping.')
             return
@@ -234,6 +234,15 @@ if __name__ == '__main__':
     #Nebenkanal "WER HAT ANGST VORM SCHWARZEN MANN"
     SCHWARZ_channel_url="https://www.youtube.com/channel/UCa7jxqU8qeHABn_Y4-GE1Uw"
 
+    try:
+        collect_channel_data = CollectChannelData(Schoepf_channel_url, basefolder= "DATA")
+        collect_channel_data.process_channel()
+            #collect_channel_data.create_empty_csv(features)
+    except:
+        print(item +" hat nicht geklappt")
+
+
+
     all_channels = [
         Schoepf_channel_url,
         Wahrheit_channel_url,
@@ -257,42 +266,15 @@ if __name__ == '__main__':
 
 
     #Multiple CSVs erstellen
-    """"
-    all_channels= [
-    Schoepf_channel_url, 
-    Warheit_channel_url, 
-    Rettung_channel_url, 
-    Freiheit_channel_url, 
-    ALLES_channel_url,
-    VEITCLUB_channel_url,
-    Drachentoeter_channel_url,
-    UBC_channel_url
-    ]
 
-    all_channels= [
-    Rettung_channel_url, 
-    Freiheit_channel_url, 
-    ALLES_channel_url,
-    VEITCLUB_channel_url,
-    Drachentoeter_channel_url,
-    UBC_channel_url
-    ]
-    """
-
-    """
-    for item in all_channels:
-        collect_channel_data = CollectChannelData(item)
-        collect_channel_data.process_channel()
-        collect_channel_data.create_empty_csv(features)
-    print("FERTIG HAT ALLES GEKLAPPT")
-    
-    #collect_channel_data.create_empty_csv(features)
-    """
+"""
     for item in all_channels:
         try:
-            collect_channel_data = CollectChannelData(item, basefolder= r"DATA")
+            collect_channel_data = CollectChannelData(item, basefolder= "DATA")
+
             collect_channel_data.process_channel()
             #collect_channel_data.create_empty_csv(features)
         except:
             print(item +" hat nicht geklappt")
-    print("FERTIG")
+
+"""
