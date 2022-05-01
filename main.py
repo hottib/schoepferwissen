@@ -128,6 +128,8 @@ if __name__ == '__main__':
     PLANET_channel_url="https://www.youtube.com/channel/UC0KvN280Qjkh4Albvhibt1A"
     #Nebenkanal "WER HAT ANGST VORM SCHWARZEN MANN"
     SCHWARZ_channel_url="https://www.youtube.com/channel/UCa7jxqU8qeHABn_Y4-GE1Uw"
+    #Nebenkanal "veritas lügensarg tv"
+    veritas_channel_url="https://www.youtube.com/channel/UCtdcj_3Hoc4VBr6CHR9TVKg"
 
     all_channels = [
         Schoepf_channel_url,
@@ -143,7 +145,8 @@ if __name__ == '__main__':
         WISSEN_channel_url,
         Zwilling_channel_url,
         PLANET_channel_url,
-        SCHWARZ_channel_url
+        SCHWARZ_channel_url,
+        veritas_channel_url
     ]
 
     #EINE CSV ERSTELLEN
