@@ -4,9 +4,9 @@ import pandas as pd
 from pathlib import Path, PurePath
 import base64
 
-basefolder = r"\\DATEN\Schöpferwissen\.DATA"
+basefolder = r"\\DATEN\Schoepferwissen\.DATA"
 datajson = basefolder + r"\timeline.json"
-images = ["marc-unfall.png"]
+images = ["internil-logo.png", "marc-unfall.png"]
 
 #if we don't find above path, ask for a new one
 while not Path(datajson).exists():
@@ -31,7 +31,7 @@ with open(datajson, encoding='utf-8', mode="r") as f:
     timelinedata = f.read()
 
 #since streamlit has no easy solution for serving static files, we manually put our images into the local static folder and reference them in a list
-for imagename in images.items():
+for imagename in images:
     timelinedata = timelinedata.replace(imagename, f"./static/timeline-media/{imagename}")
 
 

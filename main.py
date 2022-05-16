@@ -26,7 +26,7 @@ class CollectChannelData:
     def create_empty_csv(self, features):
         channel = Channel(self.channel_url)
         channel_name = channel.channel_name
-        basefolder = r"\\DATEN\Schöpferwissen\.DATA"
+        basefolder = r"\\DATEN\Schoepferwissen\.DATA"
         filename = os.path.join(basefolder, channel_name + "_manuell.csv")
 
         if os.path.exists(filename):
@@ -52,7 +52,7 @@ class CollectChannelData:
         df = pd.DataFrame()
         channel = Channel(self.channel_url)
         channel_name = channel.channel_name
-        basefolder = r"\\DATEN\Schöpferwissen\.DATA"
+        basefolder = r"\\DATEN\Schoepferwissen\.DATA"
         filename = os.path.join(basefolder, channel_name + "_automated.csv")
 
         if os.path.exists(filename):
@@ -130,6 +130,8 @@ if __name__ == '__main__':
     SCHWARZ_channel_url="https://www.youtube.com/channel/UCa7jxqU8qeHABn_Y4-GE1Uw"
     #Nebenkanal "veritas lügensarg tv"
     veritas_channel_url="https://www.youtube.com/channel/UCtdcj_3Hoc4VBr6CHR9TVKg"
+    #Nebenkanal "Schöpferwissen- Peek-TV"
+    Peek_channel_url="https://www.youtube.com/channel/UCR-SzCuVaQhJC7BnfMPx6PQ"
 
     all_channels = [
         Schoepf_channel_url,
@@ -146,7 +148,8 @@ if __name__ == '__main__':
         Zwilling_channel_url,
         PLANET_channel_url,
         SCHWARZ_channel_url,
-        veritas_channel_url
+        veritas_channel_url,
+        Peek_channel_url
     ]
 
     #EINE CSV ERSTELLEN
