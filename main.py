@@ -11,23 +11,23 @@ class CollectChannelData:
         self.basefolder = basefolder
 
     def update(self, folderWithCSVs):
-        channel = Channel(self.channel_url)
         all_CSVs = glob.glob(folderWithCSVs +"\*_automated.csv")
-        print(all_CSVs)
+        
         for csv in all_CSVs: 
-            #print(csv)
+            print("Checking %s ..." %csv)
             self.update_counter = 0
             df = pd.read_csv(csv)
-            df_sort = df.sort_values("publish_date", ascending = False)
-            print(df_sort)
-            lastupdate = df_sort.at[0, "publish_date"]
-            lastupdate = self.Date2int(lastupdate)
-            print("Checking %s ..." %csv)
+            if not df.empty:
+                df_sort = df.sort_values("publish_date", ascending = False)
+                lastupdate = df_sort.at[0, "publish_date"]
+                lastupdate = self.Date2int(lastupdate)  
+            else:
+                print("csv is empty calling process channel") 
+            
             for channel_url in self.all_channels:
                 channel = Channel(channel_url)
                 channel_name = channel.channel_name
-                csvClean = csv.replace("DATA\\","").replace("_automated.csv", "")
-                
+                csvClean = csv.replace(self.basefolder,"").replace("_automated.csv", "")
                 if channel_name == csvClean:
                     for url in channel.video_urls:
                         yt = YouTube(url)
@@ -57,82 +57,28 @@ class CollectChannelData:
                                             "yt_caption_info": yt_caption_info})
                             updated_df = pd.concat([pd.DataFrame(data), df], ignore_index=True)
                             updated_df.to_csv(csv)
+
+
                         else: 
                             break
+                        print("I"*70)
+                        print("Updating "+ channel_url)
+                        print("Channel URL "+ channel_url)
+                        print("Channel ID  " + channel.channel_id)
+                        print("Channel Name  " + channel_name)
+                        print(f"csvCLean is: {csvClean}")
             print("There are %s new Vids" % self.update_counter)
                         
     def Date2int(self, date):
         integer = date.replace("-", "")
         integer = int(integer)
         return integer          
-            
-    def create_empty_csv(self, featrues):   
-        channel = Channel(self.channel_url)
-        channel_name = channel.channel_name
-        print("___"*100)
-        filename= "DATA/"+ channel_name + "_manuel.csv"
-        try:
-            df = pd.DataFrame(filename)
-            print("File already exists. Use self.update for adding")
-        except:
-            df = pd.DataFrame(columns=featrues)
-            listofzeros = [0] * len(featrues)
-            for url in channel.video_urls:
-                id = url.replace("https://www.youtube.com/watch?v=", "")
-                print(id)
-                yt = YouTube(url)
-                title = yt.title
-                date = yt.publish_date
-                new_row = listofzeros
-                new_row[0] = date
-                new_row[1] = id
-                new_row[2] = title
-                df.loc[len(df.index)]= new_row
-            df.to_csv(filename, index=False)
-            print("NEW Filename: " + filename)
-        channel_name = channel.channel_name
-        filename= "../DATA/"+ channel_name + "_manuell.csv"
-        try:
-            print(filename)
-            df = pd.read_csv(filename)
-            print(df)
-
-            print("Update NOW!")
-
-        except:
-            print(filename)
-
-    def create_empty_csv(self, features):
-        channel = Channel(self.channel_url)
-        channel_name = channel.channel_name
-        print("ööööö"*100)
-        filename = os.path.join(self.basefolder, channel_name + "_manuell.csv")
-        if os.path.exists(filename):
-            print(f'File {filename} already exists. Skipping.')
-            return
-
-        df = pd.DataFrame(columns=features)
-        listofblanks = [' '] * len(features)
-        print(f"Processing manual CSV for channel {channel_name}...")
-        for url in channel.video_urls:
-            video_id = url.replace("https://www.youtube.com/watch?v=", "")
-            print(f"\r{video_id}", end="")
-            new_row = listofblanks
-            new_row[0] = video_id
-            df.loc[len(df.index)]= new_row
-        df.to_csv(filename, index=False)
-        print("\r"+"="*100)
-        print("Saved as:", filename)
-        print("="*100)
 
     def process_channel(self):
         df = pd.DataFrame()
         channel = Channel(self.channel_url)
-        print(f"THis is {channel}")
         channel_name = channel.channel_name
-        print(channel_name)
         filename = os.path.join(self.basefolder, channel_name + "_automated.csv")
-        print(filename)
         if os.path.exists(filename):
             print(f'File {filename} already exists. Skipping.')
             return
@@ -141,14 +87,14 @@ class CollectChannelData:
         df = pd.DataFrame(columns=features)
         new_row = [0] * len(features)
         print(f"Processing channel {channel_name} for metadata...")
-        print(channel.video_urls)
+        
         for url in channel.video_urls:
             yt = YouTube(url)
             yt.bypass_age_gate()
             yt.check_availability()
             publish_date = yt.publish_date
             video_id = url.replace("https://www.youtube.com/watch?v=", "")
-            print(f"\r{video_id}", end="")
+            #print(f"\r{video_id}", end="")
             title = yt.title
             description = yt.description
             tags = yt.keywords
@@ -167,22 +113,27 @@ class CollectChannelData:
             new_row[7] = age_restricted
             new_row[8] = yt_caption_info
             new_row[9] = vid_info
-            print(new_row)
+            #print(new_row)
             df.loc[len(df.index)]= new_row
-        print("\r"+"="*100)
-        print(self.basefolder)
-        print("Saved as:", filename)
-        print("="*100)
-        df.to_csv(filename, index=False)
-            
+        if channel.video_urls != []:
+            print("\r"+"="*100)
+            print(self.basefolder)
+            print("Saved as:", filename)
+            print("="*100)
+            df.to_csv(filename, index=False)
+        else : print(f"No Vids found under {channek}")
+                
 if __name__ == '__main__':
 
     features =  ["publish_date","id", "title", "sentiments", "effects", "sound", "behaviour", "tags", "people", "location"]
-    #HIER KANAL AUSWÄHLEN
+    #DIESe Kanäle gibt es nicht mehr
     #Hauptkanal "Schöpferwissen TV": 938 Videos
     Schoepf_channel_url="https://www.youtube.com/channel/UCGQFj8C3sMhxuFJjkANkyKA/videos"
     #Nebenkanal "Der Wahrheit verpflichtet": 994 Videos
     Wahrheit_channel_url="https://www.youtube.com/c/DerWahrheitverpflichtet"
+    #Nebenkanal "Honett"
+    Honett_channel_url="https://www.youtube.com/channel/UC2BK1JGDSB0RFSJdijEBnpA"
+    
     #Nebenkanal "Rettung der Menschheit TV": 92 Videos
     Rettung_channel_url="https://www.youtube.com/channel/UC5ZGCLwrKIJrdhYwHYcXCvA/videos"
     #Nebenkanal "Der Weg in deine Freiheit": 32 Videos
@@ -197,8 +148,6 @@ if __name__ == '__main__':
     UBC_channel_url="https://www.youtube.com/channel/UCWELnCGV_IYWctpTPiB8-Sw"
     #Nebenkanal "u n endlich"
     unendlich_channel_url="https://www.youtube.com/channel/UCyIj6T2W5xQsi7dCbfuJdUw"
-    #Nebenkanal "Honett"
-    Honett_channel_url="https://www.youtube.com/channel/UC2BK1JGDSB0RFSJdijEBnpA"
     #Nebenkanal "WISSEN - NICHT VON DIESER WELT"
     WISSEN_channel_url="https://www.youtube.com/channel/UC5Sr_xoXTkBThtqthLwOkPg"
     #Nebenkanal "Der verlorene Zwilling TV"
@@ -208,16 +157,14 @@ if __name__ == '__main__':
     #Nebenkanal "WER HAT ANGST VORM SCHWARZEN MANN"
     SCHWARZ_channel_url="https://www.youtube.com/channel/UCa7jxqU8qeHABn_Y4-GE1Uw"
     #Neuer Kanal 6 Monate alt
-    SCHOEPF_TV_UBC_url ="https://www.youtube.com/@verlorenundwiedergefunden4330/"
-    #Leere Kanal
+    yt = YouTube("https://www.youtube.com/watch?v=Sa8lt2Dk2KI&t=126s")
+    c = yt.channel_url
+    SCHOEPF_TV_UBC_url =c
+    #Leere Kanal ??? Y Julia?
     DAS_WISSEN_url = "https://www.youtube.com/@DasWissen/"
     
-
     all_channels = [
         SCHOEPF_TV_UBC_url,
-        DAS_WISSEN_url,
-        Schoepf_channel_url,
-        Wahrheit_channel_url,
         Rettung_channel_url,
         Freiheit_channel_url,
         ALLES_channel_url,
@@ -225,7 +172,6 @@ if __name__ == '__main__':
         Drachentoeter_channel_url,
         UBC_channel_url,
         unendlich_channel_url,
-        Honett_channel_url,
         WISSEN_channel_url,
         Zwilling_channel_url,
         PLANET_channel_url,
@@ -238,14 +184,12 @@ if __name__ == '__main__':
 
 
     #Multiple CSVs erstellen
-    """
     update = CollectChannelData(WISSEN_channel_url, basefolder= r"schoepferwissen\Test")
     update.update(r"schoepferwissen\Test")
 
-    """
-    url = "https://www.youtube.com/channel/UCWELnCGV_IYWctpTPiB8-Sw"
-    collect_channel_data = CollectChannelData(url, basefolder= r"schoepferwissen\Test")
-    collect_channel_data.process_channel()
+    #url = "https://www.youtube.com/channel/UCWELnCGV_IYWctpTPiB8-Sw"
+    #collect_channel_data = CollectChannelData(url, basefolder= r"schoepferwissen\Test")
+    #collect_channel_data.process_channel()
     """
     for item in all_channels:
         try:
@@ -253,7 +197,10 @@ if __name__ == '__main__':
             collect_channel_data.process_channel()
             #collect_channel_data.create_empty_csv(features)
         except:
-            variable = [ i for i, j in locals().items() if j == Schoepf_channel_url][0]
-            print(variable +" hat nicht geklappt")
+
+            print(item +" hat nicht geklappt")
+
     """
+    #Welche Videos wurden gelöscht?
+    #Vllt noch in den MEtadaten bisschen rumwühlen
 
