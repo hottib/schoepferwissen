@@ -163,6 +163,8 @@ if __name__ == '__main__':
     #Leere Kanal ??? Y Julia?
     DAS_WISSEN_url = "https://www.youtube.com/@DasWissen/"
     
+    folder = r"schoepferwissen\DATA"
+    
     all_channels = [
         SCHOEPF_TV_UBC_url,
         Rettung_channel_url,
@@ -184,23 +186,23 @@ if __name__ == '__main__':
 
 
     #Multiple CSVs erstellen
-    update = CollectChannelData(WISSEN_channel_url, basefolder= r"schoepferwissen\Test")
-    update.update(r"schoepferwissen\Test")
+    #update = CollectChannelData(WISSEN_channel_url, basefolder= r"schoepferwissen\Test")
+    #update.update(r"schoepferwissen\Test")
 
     #url = "https://www.youtube.com/channel/UCWELnCGV_IYWctpTPiB8-Sw"
     #collect_channel_data = CollectChannelData(url, basefolder= r"schoepferwissen\Test")
     #collect_channel_data.process_channel()
-    """
+   
     for item in all_channels:
         try:
-            collect_channel_data = CollectChannelData(item, basefolder= r"schoepferwissen\Test")
+            collect_channel_data = CollectChannelData(item, basefolder= folder)
             collect_channel_data.process_channel()
             #collect_channel_data.create_empty_csv(features)
         except:
 
             print(item +" hat nicht geklappt")
 
-    """
+
     #Welche Videos wurden gelöscht?
     #Vllt noch in den MEtadaten bisschen rumwühlen
 
