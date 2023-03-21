@@ -7,7 +7,7 @@ class CollectChannelData:
     
     def __init__(self, channel_url, basefolder = r"C:\Users\Stacky\Desktop\schöpferwissen_code\schoepferwissen", list_of_all_channels = []):
         self.channel_url = channel_url
-        self.all_channels= all_channels
+        self.all_channels= list_of_all_channels
         self.basefolder = basefolder
 
     def update(self, folderWithCSVs):
@@ -121,7 +121,7 @@ class CollectChannelData:
             print("Saved as:", filename)
             print("="*100)
             df.to_csv(filename, index=False)
-        else : print(f"No Vids found under {channek}")
+        else : print(f"No Vids found under {channel}")
                 
 if __name__ == '__main__':
 
@@ -132,8 +132,7 @@ if __name__ == '__main__':
     #Nebenkanal "Der Wahrheit verpflichtet": 994 Videos
     Wahrheit_channel_url="https://www.youtube.com/c/DerWahrheitverpflichtet"
     #Nebenkanal "Honett"
-    Honett_channel_url="https://www.youtube.com/channel/UC2BK1JGDSB0RFSJdijEBnpA"
-    
+    Honett_channel_url="https://www.youtube.com/channel/UC2BK1JGDSB0RFSJdijEBnpA" 
     #Nebenkanal "Rettung der Menschheit TV": 92 Videos
     Rettung_channel_url="https://www.youtube.com/channel/UC5ZGCLwrKIJrdhYwHYcXCvA/videos"
     #Nebenkanal "Der Weg in deine Freiheit": 32 Videos
@@ -162,8 +161,40 @@ if __name__ == '__main__':
     SCHOEPF_TV_UBC_url =c
     #Leere Kanal ??? Y Julia?
     DAS_WISSEN_url = "https://www.youtube.com/@DasWissen/"
-    
+    #Creator Monkeys TV
+    CREATOR_MONKEY_url = "https://www.youtube.com/channel/UCOpGOKYXoEFU47XwDzpjOXQ"
     folder = r"schoepferwissen\DATA"
+    ###DIE GEHEN NICHT
+    #veritas Lügensarg
+    yt = YouTube("https://www.youtube.com/watch?v=GKOS8gi4Z4c")
+    c = yt.channel_url
+    VERITAS_url = c
+    channel = Channel(VERITAS_url)
+    channel_name = channel.channel_name
+    #Schöpferwissen TV UBC NOBODY KNOWS
+    url = "https://www.youtube.com/watch?v=3KAxNt5xZIQ"
+    yt = YouTube(url)
+    SCHOEPF_TV_UBC_NOBODY_KNOWS_url = yt.channel_url
+    #Schöpferwissen- Peek-TV
+    url = "https://www.youtube.com/watch?v=3KAxNt5xZIQ"
+    yt = YouTube(url)
+    SCHOEPF_PEEK_TV_url = yt.channel_url
+    # THE_TIME_IS_NOW
+    url = "https://www.youtube.com/watch?v=lMnXtsKIh8c"
+    yt = YouTube(url)
+    THE_TIME_IS_NOW_url = yt.channel_url
+    # BEWUSSTUNDSO
+    url = "https://www.youtube.com/watch?v=NtMYHvgLP0c"
+    yt = YouTube(url)
+    BEWUSSTUNDSO_url = yt.channel_url
+    
+    """
+    es fehlenurls von:
+    SON GOKU TV
+    ___k__ungefähr
+    """
+    collect_channel_data = CollectChannelData(SCHOEPF_PEEK_TV_url, basefolder= folder)
+    collect_channel_data.process_channel()
     
     all_channels = [
         SCHOEPF_TV_UBC_url,
@@ -184,6 +215,19 @@ if __name__ == '__main__':
     #collect_channel_data = CollectChannelData(VEITCLUB_channel_url)
     #collect_channel_data.update("DATA")
 
+"""
+    for item in all_channels:
+        try:
+            collect_channel_data = CollectChannelData(item, basefolder= folder)
+            collect_channel_data.process_channel()
+            #collect_channel_data.create_empty_csv(features)
+
+        except:
+
+            print(item +" hat nicht geklappt")
+
+    """
+
 
     #Multiple CSVs erstellen
     #update = CollectChannelData(WISSEN_channel_url, basefolder= r"schoepferwissen\Test")
@@ -192,17 +236,5 @@ if __name__ == '__main__':
     #url = "https://www.youtube.com/channel/UCWELnCGV_IYWctpTPiB8-Sw"
     #collect_channel_data = CollectChannelData(url, basefolder= r"schoepferwissen\Test")
     #collect_channel_data.process_channel()
-   
-    for item in all_channels:
-        try:
-            collect_channel_data = CollectChannelData(item, basefolder= folder)
-            collect_channel_data.process_channel()
-            #collect_channel_data.create_empty_csv(features)
-        except:
 
-            print(item +" hat nicht geklappt")
-
-
-    #Welche Videos wurden gelöscht?
-    #Vllt noch in den MEtadaten bisschen rumwühlen
 
