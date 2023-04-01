@@ -160,7 +160,7 @@ searchgrid_options = {
 }
 st.set_page_config(page_title="Schöpferwissen",layout='wide')
 
-basefolder = r"\\DATEN\Schöpferwissen"
+basefolder = r"\\DATEN\Schoepferwissen"
 datafolder = basefolder + r"\.DATA"
 
 #if we don't find above path, ask for a new one
