@@ -171,37 +171,44 @@ if __name__ == '__main__':
     features =  ["id", "sentiments", "effects", "sound", "behaviour", "tags", "people", "location", "CDS"]
 
     #Hauptkanal "Schöpferwissen TV"
-    #Schoepf_channel_url="https://www.youtube.com/channel/UCGQFj8C3sMhxuFJjkANkyKA/videos"
+    Schoepf_channel_url="https://www.youtube.com/channel/UCGQFj8C3sMhxuFJjkANkyKA/videos"
 
     #Nebenkanal "Creator Monkeys TV", Mai 2017 - Mai 2022, Betreiber*in vermutlich Julia
     Monkeys_channel_url="https://www.youtube.com/@creatormonkeystv6514"
 
     #gelöschter Nebenkanal "Der Wahrheit verpflichtet"
-    #Wahrheit_channel_url="https://www.youtube.com/c/DerWahrheitverpflichtet"
+    Wahrheit_channel_url="https://www.youtube.com/c/DerWahrheitverpflichtet"
     #gelöschter Nebenkanal "Honett"
-    #Honett_channel_url="https://www.youtube.com/channel/UC2BK1JGDSB0RFSJdijEBnpA"
+    Honett_channel_url="https://www.youtube.com/channel/UC2BK1JGDSB0RFSJdijEBnpA"
+
 
     #Nebenkanal "Der Weg in deine Freiheit", Mai 2019 - August 2021, Betreiber vermutlich Heiko, mit Links zu seinen diversen Blogs
     Freiheit_channel_url= "https://www.youtube.com/@derwegindeinefreiheit9206/videos"
 
-    #Kanal-System, betrieben von ? (nicht Tina)
+
+    #Kanal-System, betrieben von Franz
     #Nebenkanal "WISSEN - NICHT VON DIESER WELT", gelöscht seit 22.3.23
-    WISSEN_channel_url="https://www.youtube.com/@wissen-nichtvondieserwelt6328/videos"
+    WISSEN_channel_url="https://www.youtube.com/@VEITorDIE/videos"
     #Nebenkanal "Der verlorene Zwilling TV"
     Zwilling_channel_url="https://www.youtube.com/@derverlorenezwillingtv5818/videos"
     #Nebenkanal "ALLESUNDNICHTS"
     ALLES_channel_url="https://www.youtube.com/@allesundnichts6336/videos"
     #Nebenkanal "Drachentöter TV", gelöscht 31.3.2023
-    Drachentoeter_channel_url="https://www.youtube.com/@drachentotertv1867/videos"
+    Drachentoeter_channel_url="https://www.youtube.com/@SAGKEINWORT/videos"
     #Nebenkanal "WER HAT ANGST VORM SCHWARZEN MANN"
     SCHWARZ_channel_url="https://www.youtube.com/@werhatangstvormschwarzenma4240/videos"
     #Nebenkanal "Veit Club"
     VEITCLUB_channel_url="https://www.youtube.com/@veitclub6907/videos"
     #Nebenkanal "SON GOKU TV"
     SONGOKU_channel_url="https://www.youtube.com/@songokutv8924/videos"
+    #Nebenkanal "PLANET VEIT", April 2022
+    PLANET_channel_url="https://www.youtube.com/@planetveit8902/videos"
+
+
     #Nebenkanal "Rettung der Menschheit TV" / Rettung Menschheit UBC (Rettung der Menschheit mit dem Schwert des Wissens)
     #Es ist alles gesagt / Aus die Maus (geleert)
     #seit 21.3.2023 zurück als "Rettung Menschheit?" / "Rettung Menscheit UBC"
+    #betrieben von Helga
     Rettung_channel_url="https://www.youtube.com/@DasWissen/videos"
 
 
@@ -214,16 +221,18 @@ if __name__ == '__main__':
     #Nebenkanal "___________k______ungefähr"
     ungefaehr_channel_url="https://www.youtube.com/@_________F--A------EHR/videos"
 
-    #Nebenkanal "PLANET VEIT", April 2022, Betreiber*in vermutlich ebenfalls wie oben
-    PLANET_channel_url="https://www.youtube.com/@planetveit8902/videos"
 
-    #Kanal "veritas lügensarg tv", Betreiber*in Gelgia? (Location Schweiz)
+    #Kanal "veritas lügensarg tv", Betreiber*in Cilgia? (Location Schweiz)
     veritas_channel_url="https://www.youtube.com/@veritaslugensargtv8637/videos"
+
 
     #Steffis Kanal: "Schöpferwissen TV UBC (ehemals Verloren und Wiedergefunden), nach Thomas Entlassung alte SW-Videos gelöscht"
     Verloren_channel_url="https://www.youtube.com/@verlorenundwiedergefunden4330/videos"
+
+
     #Tinas Kanal: Schöpferwissen TV TIME FOR JUSTICE UBC, jetzt Schöpferwissen TV UBC NOBODY KNOWS
     Justice_channel_url="https://www.youtube.com/@timeforjusticeTV/videos"
+
 
     #Nebenkanal "UBC TV", Mai-Juni 2017, Betreiber*in unklar
     UBC_channel_url="https://www.youtube.com/@ubctv9741/videos"
@@ -233,6 +242,7 @@ if __name__ == '__main__':
     TheTime_channel_url="https://www.youtube.com/@thetimeisnow9902/videos"
     #Nebenkanal "bewusstundso", Juli 2017 - Juni 2019, Betreiber*in unklar
     bewusstundso_channel_url="https://www.youtube.com/@bewusstundso9618/videos"
+
 
     #Nebenkanal "Schöpferwissen TV - Backup NEU (siehe Kanalinfo)", , Betreiber*in ?
     backupneu_channel_url="https://www.youtube.com/@schopferwissentv-backupneu2752/videos"
@@ -254,11 +264,11 @@ if __name__ == '__main__':
         Freiheit_channel_url,
         ALLES_channel_url,
         VEITCLUB_channel_url,
-        #Drachentoeter_channel_url,
+        Drachentoeter_channel_url,
         UBC_channel_url,
         unendlich_channel_url,
         #Honett_channel_url,
-        #WISSEN_channel_url,
+        WISSEN_channel_url,
         Zwilling_channel_url,
         SONGOKU_channel_url,
         PLANET_channel_url,
