@@ -67,3 +67,4 @@ if __name__ == "__main__":
     folder2parse = r"\\DATEN\Schöpferwissen\UBC TV"
     #extension is set to "-transcript" by default
     search = searchText("hallo", folder2parse)
+    print(search)
