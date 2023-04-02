@@ -193,7 +193,7 @@ if __name__ == '__main__':
     Zwilling_channel_url="https://www.youtube.com/@derverlorenezwillingtv5818/videos"
     #Nebenkanal "ALLESUNDNICHTS"
     ALLES_channel_url="https://www.youtube.com/@allesundnichts6336/videos"
-    #Nebenkanal "Drachentöter TV", gelöscht 31.3.2023
+    #Nebenkanal "Drachentöter TV"
     Drachentoeter_channel_url="https://www.youtube.com/@SAGKEINWORT/videos"
     #Nebenkanal "WER HAT ANGST VORM SCHWARZEN MANN"
     SCHWARZ_channel_url="https://www.youtube.com/@werhatangstvormschwarzenma4240/videos"
@@ -205,9 +205,9 @@ if __name__ == '__main__':
     PLANET_channel_url="https://www.youtube.com/@planetveit8902/videos"
 
 
-    #Nebenkanal "Rettung der Menschheit TV" / Rettung Menschheit UBC (Rettung der Menschheit mit dem Schwert des Wissens)
+    #Nebenkanal "Rettung der Menschheit TV" / Rettung Menschheit UBC / Rettung der Menschheit mit dem Schwert des Wissens
     #Es ist alles gesagt / Aus die Maus (geleert)
-    #seit 21.3.2023 zurück als "Rettung Menschheit?" / "Rettung Menscheit UBC"
+    #seit 21.3.2023 zurück als "Rettung Menschheit?" / "Rettung Menschheit UBC"
     #betrieben von Helga
     Rettung_channel_url="https://www.youtube.com/@DasWissen/videos"
 
@@ -222,7 +222,7 @@ if __name__ == '__main__':
     ungefaehr_channel_url="https://www.youtube.com/@_________F--A------EHR/videos"
 
 
-    #Kanal "veritas lügensarg tv", Betreiber*in Cilgia? (Location Schweiz)
+    #Kanal "veritas lügensarg tv", Betreiberin Cilgia? (Location Schweiz)
     veritas_channel_url="https://www.youtube.com/@veritaslugensargtv8637/videos"
 
 
@@ -246,15 +246,6 @@ if __name__ == '__main__':
 
     #Nebenkanal "Schöpferwissen TV - Backup NEU (siehe Kanalinfo)", , Betreiber*in ?
     backupneu_channel_url="https://www.youtube.com/@schopferwissentv-backupneu2752/videos"
-
-
-    try:
-        collect_channel_data = CollectChannelData(Schoepf_channel_url, basefolder= "DATA")
-        collect_channel_data.process_channel()
-            #collect_channel_data.create_empty_csv(features)
-    except:
-        print(item +" hat nicht geklappt")
-
 
 
     all_channels = [
